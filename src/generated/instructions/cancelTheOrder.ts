@@ -14,29 +14,44 @@ import * as web3 from '@solana/web3.js'
  * @category CancelTheOrder
  * @category generated
  */
-export const cancelTheOrderStruct = new beet.BeetArgsStruct<{
-  instructionDiscriminator: number[] /* size: 8 */
-}>(
-  [['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)]],
+export type CancelTheOrderInstructionArgs = {
+  orderSalt: Uint8Array
+}
+/**
+ * @category Instructions
+ * @category CancelTheOrder
+ * @category generated
+ */
+export const cancelTheOrderStruct = new beet.FixableBeetArgsStruct<
+  CancelTheOrderInstructionArgs & {
+    instructionDiscriminator: number[] /* size: 8 */
+  }
+>(
+  [
+    ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
+    ['orderSalt', beet.bytes],
+  ],
   'CancelTheOrderInstructionArgs'
 )
 /**
  * Accounts required by the _cancelTheOrder_ instruction
  *
+ * @property [_writable_] mint
+ * @property [] config
  * @property [_writable_] tmpTokenAccount
  * @property [_writable_] orderAccount
  * @property [_writable_] buyerTokenAccount
- * @property [] config
  * @property [_writable_, **signer**] buyer
  * @category Instructions
  * @category CancelTheOrder
  * @category generated
  */
 export type CancelTheOrderInstructionAccounts = {
+  mint: web3.PublicKey
+  config: web3.PublicKey
   tmpTokenAccount: web3.PublicKey
   orderAccount: web3.PublicKey
   buyerTokenAccount: web3.PublicKey
-  config: web3.PublicKey
   buyer: web3.PublicKey
   tokenProgram?: web3.PublicKey
   systemProgram?: web3.PublicKey
@@ -51,18 +66,32 @@ export const cancelTheOrderInstructionDiscriminator = [
  * Creates a _CancelTheOrder_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
+ * @param args to provide as instruction data to the program
+ *
  * @category Instructions
  * @category CancelTheOrder
  * @category generated
  */
 export function createCancelTheOrderInstruction(
   accounts: CancelTheOrderInstructionAccounts,
+  args: CancelTheOrderInstructionArgs,
   programId = new web3.PublicKey('2gjgMP2Z9ESfnLMAPvDonNnNUTjVq9eJvvvs9wgJsuUp')
 ) {
   const [data] = cancelTheOrderStruct.serialize({
     instructionDiscriminator: cancelTheOrderInstructionDiscriminator,
+    ...args,
   })
   const keys: web3.AccountMeta[] = [
+    {
+      pubkey: accounts.mint,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.config,
+      isWritable: false,
+      isSigner: false,
+    },
     {
       pubkey: accounts.tmpTokenAccount,
       isWritable: true,
@@ -76,11 +105,6 @@ export function createCancelTheOrderInstruction(
     {
       pubkey: accounts.buyerTokenAccount,
       isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.config,
-      isWritable: false,
       isSigner: false,
     },
     {

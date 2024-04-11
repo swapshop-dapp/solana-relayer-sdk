@@ -11,111 +11,101 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category SendNativeTokensWithPayload
+ * @category RedeemNativeTransferWithPayload
  * @category generated
  */
-export type SendNativeTokensWithPayloadInstructionArgs = {
-  batchId: number
-  recipientAddress: number[] /* size: 32 */
-  chainId: number
+export type RedeemNativeTransferWithPayloadInstructionArgs = {
+  vaaHash: number[] /* size: 32 */
 }
 /**
  * @category Instructions
- * @category SendNativeTokensWithPayload
+ * @category RedeemNativeTransferWithPayload
  * @category generated
  */
-export const sendNativeTokensWithPayloadStruct = new beet.BeetArgsStruct<
-  SendNativeTokensWithPayloadInstructionArgs & {
+export const redeemNativeTransferWithPayloadStruct = new beet.BeetArgsStruct<
+  RedeemNativeTransferWithPayloadInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
   [
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['batchId', beet.u32],
-    ['recipientAddress', beet.uniformFixedSizeArray(beet.u8, 32)],
-    ['chainId', beet.u16],
+    ['vaaHash', beet.uniformFixedSizeArray(beet.u8, 32)],
   ],
-  'SendNativeTokensWithPayloadInstructionArgs'
+  'RedeemNativeTransferWithPayloadInstructionArgs'
 )
 /**
- * Accounts required by the _sendNativeTokensWithPayload_ instruction
+ * Accounts required by the _redeemNativeTransferWithPayload_ instruction
  *
- * @property [_writable_, **signer**] buyer
+ * @property [_writable_, **signer**] seller
  * @property [] config
  * @property [] foreignContract
- * @property [_writable_] mint
+ * @property [] mint
+ * @property [_writable_] bridgeTmpTokenAccount
  * @property [_writable_] tmpTokenAccount
+ * @property [_writable_] orderAccount
  * @property [] wormholeProgram
  * @property [] tokenBridgeProgram
  * @property [] tokenBridgeConfig
+ * @property [] vaa
+ * @property [_writable_] tokenBridgeClaim
+ * @property [] tokenBridgeForeignEndpoint
  * @property [_writable_] tokenBridgeCustody
- * @property [] tokenBridgeAuthoritySigner
  * @property [] tokenBridgeCustodySigner
- * @property [_writable_] wormholeBridge
- * @property [_writable_] wormholeMessage
- * @property [_writable_] tokenBridgeEmitter
- * @property [_writable_] tokenBridgeSequence
- * @property [_writable_] orderAccount
- * @property [_writable_] wormholeFeeCollector
  * @property [] associatedTokenProgram
- * @property [] clock
  * @category Instructions
- * @category SendNativeTokensWithPayload
+ * @category RedeemNativeTransferWithPayload
  * @category generated
  */
-export type SendNativeTokensWithPayloadInstructionAccounts = {
-  buyer: web3.PublicKey
+export type RedeemNativeTransferWithPayloadInstructionAccounts = {
+  seller: web3.PublicKey
   config: web3.PublicKey
   foreignContract: web3.PublicKey
   mint: web3.PublicKey
+  bridgeTmpTokenAccount: web3.PublicKey
   tmpTokenAccount: web3.PublicKey
+  orderAccount: web3.PublicKey
   wormholeProgram: web3.PublicKey
   tokenBridgeProgram: web3.PublicKey
   tokenBridgeConfig: web3.PublicKey
+  vaa: web3.PublicKey
+  tokenBridgeClaim: web3.PublicKey
+  tokenBridgeForeignEndpoint: web3.PublicKey
   tokenBridgeCustody: web3.PublicKey
-  tokenBridgeAuthoritySigner: web3.PublicKey
   tokenBridgeCustodySigner: web3.PublicKey
-  wormholeBridge: web3.PublicKey
-  wormholeMessage: web3.PublicKey
-  tokenBridgeEmitter: web3.PublicKey
-  tokenBridgeSequence: web3.PublicKey
-  orderAccount: web3.PublicKey
-  wormholeFeeCollector: web3.PublicKey
   systemProgram?: web3.PublicKey
   tokenProgram?: web3.PublicKey
   associatedTokenProgram: web3.PublicKey
-  clock: web3.PublicKey
   rent?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const sendNativeTokensWithPayloadInstructionDiscriminator = [
-  199, 101, 254, 230, 15, 32, 223, 201,
+export const redeemNativeTransferWithPayloadInstructionDiscriminator = [
+  97, 48, 6, 12, 209, 129, 228, 42,
 ]
 
 /**
- * Creates a _SendNativeTokensWithPayload_ instruction.
+ * Creates a _RedeemNativeTransferWithPayload_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category SendNativeTokensWithPayload
+ * @category RedeemNativeTransferWithPayload
  * @category generated
  */
-export function createSendNativeTokensWithPayloadInstruction(
-  accounts: SendNativeTokensWithPayloadInstructionAccounts,
-  args: SendNativeTokensWithPayloadInstructionArgs,
+export function createRedeemNativeTransferWithPayloadInstruction(
+  accounts: RedeemNativeTransferWithPayloadInstructionAccounts,
+  args: RedeemNativeTransferWithPayloadInstructionArgs,
   programId = new web3.PublicKey('2gjgMP2Z9ESfnLMAPvDonNnNUTjVq9eJvvvs9wgJsuUp')
 ) {
-  const [data] = sendNativeTokensWithPayloadStruct.serialize({
+  const [data] = redeemNativeTransferWithPayloadStruct.serialize({
     instructionDiscriminator:
-      sendNativeTokensWithPayloadInstructionDiscriminator,
+      redeemNativeTransferWithPayloadInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
     {
-      pubkey: accounts.buyer,
+      pubkey: accounts.seller,
       isWritable: true,
       isSigner: true,
     },
@@ -131,11 +121,21 @@ export function createSendNativeTokensWithPayloadInstruction(
     },
     {
       pubkey: accounts.mint,
+      isWritable: false,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.bridgeTmpTokenAccount,
       isWritable: true,
       isSigner: false,
     },
     {
       pubkey: accounts.tmpTokenAccount,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.orderAccount,
       isWritable: true,
       isSigner: false,
     },
@@ -155,48 +155,28 @@ export function createSendNativeTokensWithPayloadInstruction(
       isSigner: false,
     },
     {
+      pubkey: accounts.vaa,
+      isWritable: false,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.tokenBridgeClaim,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.tokenBridgeForeignEndpoint,
+      isWritable: false,
+      isSigner: false,
+    },
+    {
       pubkey: accounts.tokenBridgeCustody,
       isWritable: true,
       isSigner: false,
     },
     {
-      pubkey: accounts.tokenBridgeAuthoritySigner,
-      isWritable: false,
-      isSigner: false,
-    },
-    {
       pubkey: accounts.tokenBridgeCustodySigner,
       isWritable: false,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.wormholeBridge,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.wormholeMessage,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.tokenBridgeEmitter,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.tokenBridgeSequence,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.orderAccount,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.wormholeFeeCollector,
-      isWritable: true,
       isSigner: false,
     },
     {
@@ -211,11 +191,6 @@ export function createSendNativeTokensWithPayloadInstruction(
     },
     {
       pubkey: accounts.associatedTokenProgram,
-      isWritable: false,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.clock,
       isWritable: false,
       isSigner: false,
     },

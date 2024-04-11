@@ -8,7 +8,7 @@
 import * as beet from '@metaplex-foundation/beet'
 import * as web3 from '@solana/web3.js'
 import * as beetSolana from '@metaplex-foundation/beet-solana'
-import { Claimer, claimerBeet } from '../types/Claimer'
+import { MakerOrTaker, makerOrTakerBeet } from '../types/MakerOrTaker'
 
 /**
  * Arguments used to create {@link Order}
@@ -16,15 +16,11 @@ import { Claimer, claimerBeet } from '../types/Claimer'
  * @category generated
  */
 export type OrderArgs = {
-  makerFee: number
-  takerFee: number
+  fee: number
+  orderOwner: MakerOrTaker
   chainId: number
   claimDeadline: beet.bignum
   amount: beet.bignum
-  claimer: Claimer
-  buyer: web3.PublicKey
-  seller: web3.PublicKey
-  token: web3.PublicKey
 }
 
 export const orderDiscriminator = [134, 173, 223, 185, 77, 86, 28, 51]
@@ -37,15 +33,11 @@ export const orderDiscriminator = [134, 173, 223, 185, 77, 86, 28, 51]
  */
 export class Order implements OrderArgs {
   private constructor(
-    readonly makerFee: number,
-    readonly takerFee: number,
+    readonly fee: number,
+    readonly orderOwner: MakerOrTaker,
     readonly chainId: number,
     readonly claimDeadline: beet.bignum,
-    readonly amount: beet.bignum,
-    readonly claimer: Claimer,
-    readonly buyer: web3.PublicKey,
-    readonly seller: web3.PublicKey,
-    readonly token: web3.PublicKey
+    readonly amount: beet.bignum
   ) {}
 
   /**
@@ -53,15 +45,11 @@ export class Order implements OrderArgs {
    */
   static fromArgs(args: OrderArgs) {
     return new Order(
-      args.makerFee,
-      args.takerFee,
+      args.fee,
+      args.orderOwner,
       args.chainId,
       args.claimDeadline,
-      args.amount,
-      args.claimer,
-      args.buyer,
-      args.seller,
-      args.token
+      args.amount
     )
   }
 
@@ -168,8 +156,8 @@ export class Order implements OrderArgs {
    */
   pretty() {
     return {
-      makerFee: this.makerFee,
-      takerFee: this.takerFee,
+      fee: this.fee,
+      orderOwner: 'MakerOrTaker.' + MakerOrTaker[this.orderOwner],
       chainId: this.chainId,
       claimDeadline: (() => {
         const x = <{ toNumber: () => number }>this.claimDeadline
@@ -193,10 +181,6 @@ export class Order implements OrderArgs {
         }
         return x
       })(),
-      claimer: 'Claimer.' + Claimer[this.claimer],
-      buyer: this.buyer.toBase58(),
-      seller: this.seller.toBase58(),
-      token: this.token.toBase58(),
     }
   }
 }
@@ -213,15 +197,11 @@ export const orderBeet = new beet.BeetStruct<
 >(
   [
     ['accountDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
-    ['makerFee', beet.u8],
-    ['takerFee', beet.u8],
+    ['fee', beet.u8],
+    ['orderOwner', makerOrTakerBeet],
     ['chainId', beet.u16],
     ['claimDeadline', beet.u64],
     ['amount', beet.u64],
-    ['claimer', claimerBeet],
-    ['buyer', beetSolana.publicKey],
-    ['seller', beetSolana.publicKey],
-    ['token', beetSolana.publicKey],
   ],
   Order.fromArgs,
   'Order'

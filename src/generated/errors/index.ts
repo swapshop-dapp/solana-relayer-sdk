@@ -797,6 +797,26 @@ createErrorFromCodeLookup.set(0x1791, () => new FeeOverflowError())
 createErrorFromNameLookup.set('FeeOverflow', () => new FeeOverflowError())
 
 /**
+ * InvalidChain: 'Invalid chain'
+ *
+ * @category Errors
+ * @category generated
+ */
+export class InvalidChainError extends Error {
+  readonly code: number = 0x1792
+  readonly name: string = 'InvalidChain'
+  constructor() {
+    super('Invalid chain')
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, InvalidChainError)
+    }
+  }
+}
+
+createErrorFromCodeLookup.set(0x1792, () => new InvalidChainError())
+createErrorFromNameLookup.set('InvalidChain', () => new InvalidChainError())
+
+/**
  * Attempts to resolve a custom program error from the provided error code.
  * @category Errors
  * @category generated

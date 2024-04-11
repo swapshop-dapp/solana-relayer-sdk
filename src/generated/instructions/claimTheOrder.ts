@@ -14,29 +14,48 @@ import * as web3 from '@solana/web3.js'
  * @category ClaimTheOrder
  * @category generated
  */
-export const claimTheOrderStruct = new beet.BeetArgsStruct<{
-  instructionDiscriminator: number[] /* size: 8 */
-}>(
-  [['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)]],
+export type ClaimTheOrderInstructionArgs = {
+  orderSalt: Uint8Array
+}
+/**
+ * @category Instructions
+ * @category ClaimTheOrder
+ * @category generated
+ */
+export const claimTheOrderStruct = new beet.FixableBeetArgsStruct<
+  ClaimTheOrderInstructionArgs & {
+    instructionDiscriminator: number[] /* size: 8 */
+  }
+>(
+  [
+    ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
+    ['orderSalt', beet.bytes],
+  ],
   'ClaimTheOrderInstructionArgs'
 )
 /**
  * Accounts required by the _claimTheOrder_ instruction
  *
+ * @property [_writable_] mint
+ * @property [] config
  * @property [_writable_] tmpTokenAccount
  * @property [_writable_] orderAccount
  * @property [_writable_] vaultTokenAccount
  * @property [_writable_] sellerTokenAccount
+ * @property [_writable_, **signer**] goswapshop
  * @property [_writable_, **signer**] seller
  * @category Instructions
  * @category ClaimTheOrder
  * @category generated
  */
 export type ClaimTheOrderInstructionAccounts = {
+  mint: web3.PublicKey
+  config: web3.PublicKey
   tmpTokenAccount: web3.PublicKey
   orderAccount: web3.PublicKey
   vaultTokenAccount: web3.PublicKey
   sellerTokenAccount: web3.PublicKey
+  goswapshop: web3.PublicKey
   seller: web3.PublicKey
   tokenProgram?: web3.PublicKey
   systemProgram?: web3.PublicKey
@@ -51,18 +70,32 @@ export const claimTheOrderInstructionDiscriminator = [
  * Creates a _ClaimTheOrder_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
+ * @param args to provide as instruction data to the program
+ *
  * @category Instructions
  * @category ClaimTheOrder
  * @category generated
  */
 export function createClaimTheOrderInstruction(
   accounts: ClaimTheOrderInstructionAccounts,
+  args: ClaimTheOrderInstructionArgs,
   programId = new web3.PublicKey('2gjgMP2Z9ESfnLMAPvDonNnNUTjVq9eJvvvs9wgJsuUp')
 ) {
   const [data] = claimTheOrderStruct.serialize({
     instructionDiscriminator: claimTheOrderInstructionDiscriminator,
+    ...args,
   })
   const keys: web3.AccountMeta[] = [
+    {
+      pubkey: accounts.mint,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.config,
+      isWritable: false,
+      isSigner: false,
+    },
     {
       pubkey: accounts.tmpTokenAccount,
       isWritable: true,
@@ -82,6 +115,11 @@ export function createClaimTheOrderInstruction(
       pubkey: accounts.sellerTokenAccount,
       isWritable: true,
       isSigner: false,
+    },
+    {
+      pubkey: accounts.goswapshop,
+      isWritable: true,
+      isSigner: true,
     },
     {
       pubkey: accounts.seller,

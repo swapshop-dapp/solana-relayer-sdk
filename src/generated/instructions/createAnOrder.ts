@@ -11,21 +11,20 @@ import * as web3 from '@solana/web3.js'
 
 /**
  * @category Instructions
- * @category PlaceAnOrder
+ * @category CreateAnOrder
  * @category generated
  */
-export type PlaceAnOrderInstructionArgs = {
+export type CreateAnOrderInstructionArgs = {
   orderSalt: Uint8Array
   amount: beet.bignum
-  chainId: number
 }
 /**
  * @category Instructions
- * @category PlaceAnOrder
+ * @category CreateAnOrder
  * @category generated
  */
-export const placeAnOrderStruct = new beet.FixableBeetArgsStruct<
-  PlaceAnOrderInstructionArgs & {
+export const createAnOrderStruct = new beet.FixableBeetArgsStruct<
+  CreateAnOrderInstructionArgs & {
     instructionDiscriminator: number[] /* size: 8 */
   }
 >(
@@ -33,58 +32,55 @@ export const placeAnOrderStruct = new beet.FixableBeetArgsStruct<
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
     ['orderSalt', beet.bytes],
     ['amount', beet.u64],
-    ['chainId', beet.u16],
   ],
-  'PlaceAnOrderInstructionArgs'
+  'CreateAnOrderInstructionArgs'
 )
 /**
- * Accounts required by the _placeAnOrder_ instruction
+ * Accounts required by the _createAnOrder_ instruction
  *
  * @property [_writable_] mint
  * @property [] config
  * @property [_writable_] tmpTokenAccount
  * @property [_writable_] orderAccount
- * @property [_writable_] buyerTokenAccount
- * @property [_writable_, **signer**] buyer
+ * @property [_writable_, **signer**] seller
  * @property [_writable_, **signer**] goswapshop
  * @category Instructions
- * @category PlaceAnOrder
+ * @category CreateAnOrder
  * @category generated
  */
-export type PlaceAnOrderInstructionAccounts = {
+export type CreateAnOrderInstructionAccounts = {
   mint: web3.PublicKey
   config: web3.PublicKey
   tmpTokenAccount: web3.PublicKey
   orderAccount: web3.PublicKey
-  buyerTokenAccount: web3.PublicKey
-  buyer: web3.PublicKey
+  seller: web3.PublicKey
   goswapshop: web3.PublicKey
   tokenProgram?: web3.PublicKey
   systemProgram?: web3.PublicKey
   anchorRemainingAccounts?: web3.AccountMeta[]
 }
 
-export const placeAnOrderInstructionDiscriminator = [
-  31, 8, 0, 46, 243, 215, 169, 191,
+export const createAnOrderInstructionDiscriminator = [
+  212, 235, 248, 59, 27, 145, 211, 56,
 ]
 
 /**
- * Creates a _PlaceAnOrder_ instruction.
+ * Creates a _CreateAnOrder_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
  * @param args to provide as instruction data to the program
  *
  * @category Instructions
- * @category PlaceAnOrder
+ * @category CreateAnOrder
  * @category generated
  */
-export function createPlaceAnOrderInstruction(
-  accounts: PlaceAnOrderInstructionAccounts,
-  args: PlaceAnOrderInstructionArgs,
+export function createCreateAnOrderInstruction(
+  accounts: CreateAnOrderInstructionAccounts,
+  args: CreateAnOrderInstructionArgs,
   programId = new web3.PublicKey('2gjgMP2Z9ESfnLMAPvDonNnNUTjVq9eJvvvs9wgJsuUp')
 ) {
-  const [data] = placeAnOrderStruct.serialize({
-    instructionDiscriminator: placeAnOrderInstructionDiscriminator,
+  const [data] = createAnOrderStruct.serialize({
+    instructionDiscriminator: createAnOrderInstructionDiscriminator,
     ...args,
   })
   const keys: web3.AccountMeta[] = [
@@ -109,12 +105,7 @@ export function createPlaceAnOrderInstruction(
       isSigner: false,
     },
     {
-      pubkey: accounts.buyerTokenAccount,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.buyer,
+      pubkey: accounts.seller,
       isWritable: true,
       isSigner: true,
     },

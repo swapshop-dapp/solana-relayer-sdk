@@ -14,17 +14,32 @@ import * as web3 from '@solana/web3.js'
  * @category ConfirmTheOrder
  * @category generated
  */
-export const confirmTheOrderStruct = new beet.BeetArgsStruct<{
-  instructionDiscriminator: number[] /* size: 8 */
-}>(
-  [['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)]],
+export type ConfirmTheOrderInstructionArgs = {
+  orderSalt: Uint8Array
+}
+/**
+ * @category Instructions
+ * @category ConfirmTheOrder
+ * @category generated
+ */
+export const confirmTheOrderStruct = new beet.FixableBeetArgsStruct<
+  ConfirmTheOrderInstructionArgs & {
+    instructionDiscriminator: number[] /* size: 8 */
+  }
+>(
+  [
+    ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
+    ['orderSalt', beet.bytes],
+  ],
   'ConfirmTheOrderInstructionArgs'
 )
 /**
  * Accounts required by the _confirmTheOrder_ instruction
  *
+ * @property [_writable_] mint
+ * @property [] config
  * @property [_writable_] orderAccount
- * @property [_writable_] vaultTokenAccount
+ * @property [_writable_] sellerTmpTokenAccount
  * @property [_writable_] tmpTokenAccount
  * @property [_writable_, **signer**] buyer
  * @category Instructions
@@ -32,8 +47,10 @@ export const confirmTheOrderStruct = new beet.BeetArgsStruct<{
  * @category generated
  */
 export type ConfirmTheOrderInstructionAccounts = {
+  mint: web3.PublicKey
+  config: web3.PublicKey
   orderAccount: web3.PublicKey
-  vaultTokenAccount: web3.PublicKey
+  sellerTmpTokenAccount: web3.PublicKey
   tmpTokenAccount: web3.PublicKey
   buyer: web3.PublicKey
   tokenProgram?: web3.PublicKey
@@ -49,25 +66,39 @@ export const confirmTheOrderInstructionDiscriminator = [
  * Creates a _ConfirmTheOrder_ instruction.
  *
  * @param accounts that will be accessed while the instruction is processed
+ * @param args to provide as instruction data to the program
+ *
  * @category Instructions
  * @category ConfirmTheOrder
  * @category generated
  */
 export function createConfirmTheOrderInstruction(
   accounts: ConfirmTheOrderInstructionAccounts,
+  args: ConfirmTheOrderInstructionArgs,
   programId = new web3.PublicKey('2gjgMP2Z9ESfnLMAPvDonNnNUTjVq9eJvvvs9wgJsuUp')
 ) {
   const [data] = confirmTheOrderStruct.serialize({
     instructionDiscriminator: confirmTheOrderInstructionDiscriminator,
+    ...args,
   })
   const keys: web3.AccountMeta[] = [
+    {
+      pubkey: accounts.mint,
+      isWritable: true,
+      isSigner: false,
+    },
+    {
+      pubkey: accounts.config,
+      isWritable: false,
+      isSigner: false,
+    },
     {
       pubkey: accounts.orderAccount,
       isWritable: true,
       isSigner: false,
     },
     {
-      pubkey: accounts.vaultTokenAccount,
+      pubkey: accounts.sellerTmpTokenAccount,
       isWritable: true,
       isSigner: false,
     },

@@ -17,6 +17,7 @@ import * as web3 from '@solana/web3.js'
 export type SendWrappedTokensWithPayloadInstructionArgs = {
   batchId: number
   recipientAddress: number[] /* size: 32 */
+  chainId: number
 }
 /**
  * @category Instructions
@@ -32,17 +33,17 @@ export const sendWrappedTokensWithPayloadStruct = new beet.BeetArgsStruct<
     ['instructionDiscriminator', beet.uniformFixedSizeArray(beet.u8, 8)],
     ['batchId', beet.u32],
     ['recipientAddress', beet.uniformFixedSizeArray(beet.u8, 32)],
+    ['chainId', beet.u16],
   ],
   'SendWrappedTokensWithPayloadInstructionArgs'
 )
 /**
  * Accounts required by the _sendWrappedTokensWithPayload_ instruction
  *
- * @property [_writable_, **signer**] payer
+ * @property [_writable_, **signer**] buyer
  * @property [] config
  * @property [] foreignContract
  * @property [_writable_] tokenBridgeWrappedMint
- * @property [_writable_] fromTokenAccount
  * @property [_writable_] tmpTokenAccount
  * @property [] wormholeProgram
  * @property [] tokenBridgeProgram
@@ -62,11 +63,10 @@ export const sendWrappedTokensWithPayloadStruct = new beet.BeetArgsStruct<
  * @category generated
  */
 export type SendWrappedTokensWithPayloadInstructionAccounts = {
-  payer: web3.PublicKey
+  buyer: web3.PublicKey
   config: web3.PublicKey
   foreignContract: web3.PublicKey
   tokenBridgeWrappedMint: web3.PublicKey
-  fromTokenAccount: web3.PublicKey
   tmpTokenAccount: web3.PublicKey
   wormholeProgram: web3.PublicKey
   tokenBridgeProgram: web3.PublicKey
@@ -113,7 +113,7 @@ export function createSendWrappedTokensWithPayloadInstruction(
   })
   const keys: web3.AccountMeta[] = [
     {
-      pubkey: accounts.payer,
+      pubkey: accounts.buyer,
       isWritable: true,
       isSigner: true,
     },
@@ -129,11 +129,6 @@ export function createSendWrappedTokensWithPayloadInstruction(
     },
     {
       pubkey: accounts.tokenBridgeWrappedMint,
-      isWritable: true,
-      isSigner: false,
-    },
-    {
-      pubkey: accounts.fromTokenAccount,
       isWritable: true,
       isSigner: false,
     },
